@@ -1,6 +1,5 @@
 import flet as ft
 
-
 class View(ft.UserControl):
     def __init__(self, page: ft.Page):
         super().__init__()
@@ -8,40 +7,63 @@ class View(ft.UserControl):
         self._page = page
         self._page.title = "Template application using MVC and DAO"
         self._page.horizontal_alignment = 'CENTER'
-        self._page.theme_mode = ft.ThemeMode.DARK
+        self._page.theme_mode = ft.ThemeMode.LIGHT
         # controller (it is not initialized. Must be initialized in the main, after the controller is created)
         self._controller = None
         # graphical elements
         self._title = None
-        self.txt_name = None
-        self.btn_hello = None
+        self._txtInMin= None
+        self._btnAnalizzaA= None
+        self._ddAeroportoP = None
+        self._btnConnessi = None
+        self._ddAeroportoA = None
+        self._txtInTratte = None
+        self._btnCerca = None
         self.txt_result = None
-        self.txt_container = None
 
+    #-----------------------------------------------------------------------------------------------------------------------------------------
     def load_interface(self):
         # title
-        self._title = ft.Text("Hello World", color="blue", size=24)
+        self._title = ft.Text("Welcome to the TdP Flights Manager", color="green", size=24)
         self._page.controls.append(self._title)
 
         #ROW with some controls
-        # text field for the name
-        self.txt_name = ft.TextField(
-            label="name",
-            width=200,
-            hint_text="Insert a your name"
-        )
+        self._txtInMin = ft.TextField( label="Numero minimo di compagnie")
+        self._btnAnalizzaA= ft.ElevatedButton( text="Analizza aeroporti",
+                                               on_click=self._controller.handleAnalisiAeroporti )
 
-        # button for the "hello" reply
-        self.btn_hello = ft.ElevatedButton(text="Hello", on_click=self._controller.handle_hello)
-        row1 = ft.Row([self.txt_name, self.btn_hello],
-                      alignment=ft.MainAxisAlignment.CENTER)
-        self._page.controls.append(row1)
+        row1 = ft.Row( [ft.Container(None, width=250),
+                       ft.Container(self._txtInMin, width=250),
+                       ft.Container(self._btnAnalizzaA, width=250)],
+                       alignment=ft.MainAxisAlignment.CENTER)
 
-        # List View where the reply is printed
+        self._ddAeroportoP= ft.Dropdown( label="Aeroporto di Partenza" )
+        self._btnConnessi= ft.ElevatedButton( text="Aeroporti connessi",
+                                              on_click=self._controller.handleConnessiAeroporti )
+
+        row2 = ft.Row( [ft.Container(None, width=250),
+                        ft.Container(self._ddAeroportoP, width=250),
+                        ft.Container(self._btnConnessi, width=250) ],
+                        alignment = ft.MainAxisAlignment.CENTER)
+
+        self._ddAeroportoA = ft.Dropdown(label="Aeroporto di Arrivo")
+        self._txtInTratte = ft.TextField(label="Numero tratte massimo")
+        self._btnCerca = ft.ElevatedButton(text="Cerca itinerario",
+                                           on_click=self._controller.handleCercaItinerario)
+        self._btnPercorso = ft.ElevatedButton( text="Esiste una tratta?",
+                                               on_click=self._controller.handleEsistePercorso)
+
+        row3 = ft.Row( [ft.Container(self._ddAeroportoA, width=250),
+                        ft.Container(self._txtInTratte, width=250),
+                        ft.Container(self._btnCerca, width=250),
+                        ft.Container(self._btnPercorso, width=250)],
+                       alignment=ft.MainAxisAlignment.CENTER)
+
         self.txt_result = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
-        self._page.controls.append(self.txt_result)
+        self._page.add(row1, row2, row3, self.txt_result)
         self._page.update()
 
+    # -----------------------------------------------------------------------------------------------------------------------------------------
     @property
     def controller(self):
         return self._controller
@@ -53,6 +75,7 @@ class View(ft.UserControl):
     def set_controller(self, controller):
         self._controller = controller
 
+    # -----------------------------------------------------------------------------------------------------------------------------------------
     def create_alert(self, message):
         dlg = ft.AlertDialog(title=ft.Text(message))
         self._page.dialog = dlg
