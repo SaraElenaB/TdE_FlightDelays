@@ -15,5 +15,6 @@ class Airport:
     def __str__(self):
         return f"{self.AIRPORT}"
 
+
     def __hash__(self):
         return hash(self.ID)
